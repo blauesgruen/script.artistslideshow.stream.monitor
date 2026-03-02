@@ -535,6 +535,18 @@ class Main(xbmc.Player):
         return current_artists
 
     def _get_current_artist_names_mbids(self, playing_song):
+        # Check RadioMonitor.Artist first — highest priority for radio streams.
+        # Without this, JSON-RPC always returns something (even if wrong, e.g. when
+        # a station sends ICY metadata in "Title - Artist" order instead of "Artist - Title"),
+        # making the RadioMonitor check inside "if not artist_names" structurally unreachable.
+        monitor_artist = xbmc.getInfoLabel(RADIOMONITOR_ARTIST_PROP)
+        if monitor_artist and monitor_artist.strip():
+            self.LAST_RADIOMONITOR_ARTIST = monitor_artist
+            LW.log(['RadioMonitor.Artist has priority: ' + monitor_artist])
+            artist_names = self._split_artists(monitor_artist)
+            monitor_mbid = xbmc.getInfoLabel(RADIOMONITOR_MBID_PROP)
+            mbids = [monitor_mbid] if monitor_mbid else []
+            return artist_names, mbids
         try:
             response = xbmc.executeJSONRPC(
                 '{"jsonrpc":"2.0", "method":"Player.GetItem", "params":{"playerid":0, "properties":["artist", "musicbrainzartistid"]},"id":1}')
@@ -548,21 +560,11 @@ class Main(xbmc.Player):
         if not artist_names:
             LW.log(
                 ['No artist names returned from JSON call, assuming this is an internet stream'])
-            monitor_artist = xbmc.getInfoLabel(RADIOMONITOR_ARTIST_PROP)
-            if monitor_artist:
-                self.LAST_RADIOMONITOR_ARTIST = monitor_artist
-            if monitor_artist:
-                LW.log(['Using RadioMonitor.Artist: ' + monitor_artist])
-                artist_names = self._split_artists(monitor_artist)
-                monitor_mbid = xbmc.getInfoLabel(RADIOMONITOR_MBID_PROP)
-                if monitor_mbid:
-                    mbids = [monitor_mbid]
-            else:
-                playingartists = playing_song.split(' - ', 1)
-                if not self.AGRESSIVESTREAMSEARCH and len(playingartists) > 1:
-                    del playingartists[1:]
-                for playingartist in playingartists:
-                    artist_names.extend(self._split_artists(playingartist))
+            playingartists = playing_song.split(' - ', 1)
+            if not self.AGRESSIVESTREAMSEARCH and len(playingartists) > 1:
+                del playingartists[1:]
+            for playingartist in playingartists:
+                artist_names.extend(self._split_artists(playingartist))
         return artist_names, mbids
 
     def _get_current_artists_filtered(self, artist_names, mbids):
