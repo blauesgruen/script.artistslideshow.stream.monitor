@@ -1074,7 +1074,7 @@ class Main(xbmc.Player):
             if self.DOWNLOADNOTIFICATION and found_artist:
                 xbmcgui.Dialog().notification(
                     'Artist Slideshow (RadioMonitor)',
-                    'Künstler: %s' % found_artist,
+                    ADDONLANGUAGE(32948) % found_artist,
                     icon=ADDONICON,
                     time=5000
                 )
@@ -1391,7 +1391,7 @@ class Main(xbmc.Player):
             if ' - ' not in artist_name:
                 xbmcgui.Dialog().notification(
                     'Artist Slideshow (RadioMonitor)',
-                    'Suche: %s' % artist_name.strip(),
+                    ADDONLANGUAGE(32949) % artist_name.strip(),
                     icon=ADDONICON,
                     time=4000
                 )
