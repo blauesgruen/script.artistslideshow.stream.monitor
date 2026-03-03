@@ -1,4 +1,4 @@
-<addon id="script.artistslideshow.stream.monitor" name="Artist Slideshow (Audio Stream Monitor)" provider-name="pkscout,ronie,blauesgruen" version="1.0.0">
+<addon id="script.artistslideshow" name="Artist Slideshow (Audio Stream Monitor)" provider-name="pkscout,ronie,blauesgruen" version="4.0.0">
 	<requires>
 		<import addon="xbmc.python" version="3.0.0" />
 		<import addon="script.module.requests" version="2.22.0+matrix.1" />
@@ -11,8 +11,8 @@
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<news>
-v1.0.0
-- Fork of script.artistslideshow (pkscout/ronie) v3.3.8
+v4.0.0
+- Fork of script.artistslideshow (pkscout/ronie) v3.3.9
 - Added Audio Stream Monitor (RadioMonitor) integration
 - RadioMonitor.Artist/Title/MBID fallback chain for internet radio streams
 		</news>
@@ -25,6 +25,7 @@ v1.0.0
 		<website>https://kodi.wiki/index.php?title=Add-on:Artist_Slideshow</website>
 		<email>artistslideshow.xbmc@gmail.com</email>
 		<source>https://github.com/blauesgruen/script.artistslideshow.stream.monitor</source>
+		<!-- Fork of script.artistslideshow with Audio Stream Monitor integration -->
 		<summary lang="bg_BG">Сваля изображения и допълнителна инф. за изпълнителя на текущата песен</summary>
 		<summary lang="bs_BA">Preuzmite slike i dodatne informacije o izvođaču koji trenutno svira</summary>
 		<summary lang="ca_ES">Descàrrega imatges i informació addicional de l&apos;artista que s&apos;està reproduint</summary>
