@@ -1,0 +1,36 @@
+name: Create Addon ZIP
+
+on:
+  push:
+    branches: [ feature/radio-stream-support ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get version from addon.xml
+        id: get_version
+        run: |
+          VERSION=$(grep -oP 'version="\K[^"]+' addon.xml | head -1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create ZIP
+        run: |
+          mkdir -p build/script.artistslideshow
+          rsync -av --exclude='.git' --exclude='.github' --exclude='build' . build/script.artistslideshow/
+          cd build
+          zip -r ../script.artistslideshow-${{ steps.get_version.outputs.version }}.zip script.artistslideshow/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: v${{ steps.get_version.outputs.version }}
+          files: script.artistslideshow-${{ steps.get_version.outputs.version }}.zip
+          overwrite: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
