@@ -136,3 +136,4 @@ dmypy.json
 
 # Local scripts
 *.ps1
+*.bat
