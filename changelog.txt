@@ -1,10 +1,10 @@
-v1.0.0 (2026-03-03)
+v4.0.0 (2026-03-03)
 - Fork of script.artistslideshow by pkscout/ronie (v3.3.8)
 - Added RadioMonitor support via service.audio.stream.monitor (Audio Stream Monitor)
-- RadioMonitor.Artist hat Priorität über JSON-RPC für Radiostreams
-- Fallback-Kette: RadioMonitor.MBID+Artist → RadioMonitor.Artist → RadioMonitor.Title
-- Verbesserte Künstlerwechsel-Erkennung bei Internetradio
-- Benachrichtigung zeigt tatsächlich gefundenen Künstler
+- RadioMonitor.Artist has priority over JSON-RPC for radio streams
+- Fallback chain: RadioMonitor.MBID+Artist → RadioMonitor.Artist → RadioMonitor.Title
+- Improved artist change detection for internet radio
+- Notification shows the actually resolved artist name
 
 --- original changelog ---
 
