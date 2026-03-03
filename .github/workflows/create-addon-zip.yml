@@ -32,7 +32,7 @@ jobs:
         if: steps.get_version.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p build/script.artistslideshow
-          rsync -av --exclude='.git' --exclude='.github' --exclude='build' . build/script.artistslideshow/
+          rsync -av --exclude='.git' --exclude='.github' --exclude='build' --exclude='.gitignore' . build/script.artistslideshow/
           cd build
           zip -r ../script.artistslideshow-${{ steps.get_version.outputs.version }}.zip script.artistslideshow/
 
