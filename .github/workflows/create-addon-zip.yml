@@ -2,7 +2,7 @@ name: Create Addon ZIP
 
 on:
   push:
-    branches: [ feature/radio-stream-support ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
