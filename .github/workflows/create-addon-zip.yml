@@ -3,6 +3,8 @@ name: Create Addon ZIP
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'addon.xml'
   workflow_dispatch:
 
 jobs:
@@ -11,14 +13,23 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
-      - name: Get version from addon.xml
+      - name: Check if version changed
         id: get_version
         run: |
           VERSION=$(grep -oP 'version="\K[^"]+' addon.xml | head -1)
+          PREVIOUS=$(git show HEAD~1:addon.xml 2>/dev/null | grep -oP 'version="\K[^"]+' | head -1 || echo "")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          if [ "$VERSION" != "$PREVIOUS" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create ZIP
+        if: steps.get_version.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p build/script.artistslideshow
           rsync -av --exclude='.git' --exclude='.github' --exclude='build' . build/script.artistslideshow/
@@ -26,6 +37,7 @@ jobs:
           zip -r ../script.artistslideshow-${{ steps.get_version.outputs.version }}.zip script.artistslideshow/
 
       - name: Create Release
+        if: steps.get_version.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.get_version.outputs.version }}
