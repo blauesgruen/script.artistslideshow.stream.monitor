@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh pr view 87 --repo pkscout/script.artistslideshow --comments)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh pr view 87 --repo pkscout/script.artistslideshow)",
+      "Bash(gh pr reviews 87 --repo pkscout/script.artistslideshow)",
+      "Bash(gh api repos/pkscout/script.artistslideshow/pulls/87/reviews)",
+      "Bash(gh api repos/pkscout/script.artistslideshow/pulls/87/comments)",
+      "Bash(python3 -c \" import json, sys comments = json.load\\(sys.stdin\\) for c in comments: print\\(f\"\"--- Inline Comment by @{c[''user''][''login'']} ---\"\"\\) print\\(f\"\"File: {c[''path'']}, Line: {c.get\\(''line'', c.get\\(''original_line'', ''N/A''\\)\\)}\"\"\\) print\\(f\"\"Body: {c[''body'']}\"\"\\) print\\(\\) \")",
+      "Bash(python3 -c \":*)",
+      "Bash(gh api repos/pkscout/script.artistslideshow/pulls/87/comments --jq '.[] | \"\"File: \\\\\\(.path\\)\\\\nLine: \\\\\\(.line // .original_line // .position\\)\\\\nAuthor: \\\\\\(.user.login\\)\\\\nBody: \\\\\\(.body\\)\\\\n---\"\"')",
+      "Bash(gh api repos/pkscout/script.artistslideshow/pulls/87/comments --jq 'length')",
+      "Bash(gh api repos/pkscout/script.artistslideshow/issues/87/comments --jq '.[] | \"\"Author: \\\\\\(.user.login\\)\\\\nDate: \\\\\\(.created_at\\)\\\\nBody:\\\\n\\\\\\(.body\\)\\\\n===\"\"')",
+      "Bash(gh api repos/pkscout/script.artistslideshow/pulls/87 --jq '{state: .state, title: .title, merged: .merged, mergeable: .mergeable, mergeable_state: .mergeable_state, draft: .draft, created_at: .created_at, updated_at: .updated_at, closed_at: .closed_at, merged_at: .merged_at, user: .user.login, base: .base.ref, head: .head.ref}')",
+      "Bash(gh api repos/pkscout/script.artistslideshow/issues/87/comments --jq '.[] | {id: .id, user: .user.login, created_at: .created_at, updated_at: .updated_at, body: .body}')",
+      "Bash(gh api repos/pkscout/script.artistslideshow/pulls/87/reviews --jq '.[] | {id: .id, user: .user.login, state: .state, submitted_at: .submitted_at, body: .body}')",
+      "Bash(gh api repos/pkscout/script.artistslideshow/pulls/87/comments --jq '.[] | {id: .id, user: .user.login, created_at: .created_at, updated_at: .updated_at, path: .path, line: .line, body: .body}')",
+      "Bash(python -c \":*)"
+    ]
+  }
+}
