@@ -566,7 +566,58 @@ class Main(xbmc.Player):
                     (artist_name, self._get_musicbrainz_id(artist_name, mbid)))
         return artists_info
 
+    def _get_radiomonitor_artists_info(self):
+        """
+        Prefer metadata from service.audio.stream.monitor (Audio Stream Monitor)
+        when it indicates that a radio stream is playing.
+
+        This method is intentionally self-contained and only sets ARTISTS_INFO /
+        ALLARTISTS when RadioMonitor.Playing is true and an artist name is
+        available. In all other cases it returns False and allows the existing
+        Artist Slideshow logic to run unchanged.
+        """
+        if not self.USEAUDIOSTREAMMONITOR:
+            LW.log(
+                ['not using Audio Stream Monitor, skipping check for RadioMonitor properties'])
+            return False
+        try:
+            playing = xbmc.getInfoLabel(
+                'Window(Home).Property(RadioMonitor.Playing)')
+        except Exception as e:
+            LW.log(
+                ['unexpected error reading RadioMonitor.Playing, falling back to default logic', e])
+            return False
+        if not playing or playing.lower() != 'true':
+            LW.log(
+                ['Audio Stream Monitor found no stream, falling back to default logic'])
+            return False
+
+        artist = xbmc.getInfoLabel(
+            'Window(Home).Property(RadioMonitor.Artist)').strip()
+        if not artist:
+            self.ARTISTS_INFO = []
+            LW.log(
+                ['Audio Stream Monitor active but no artist yet, waiting for metadata'])
+            return True
+
+        mbid = xbmc.getInfoLabel(
+            'Window(Home).Property(RadioMonitor.MBID)').strip()
+
+        artist_names = [artist]
+        mbids = [mbid] if mbid else []
+
+        artists_info = self._get_current_artists_filtered(artist_names, mbids)
+        if not artists_info:
+            return False
+
+        self.ARTISTS_INFO = artists_info
+        LW.log(['using artist information from Audio Stream Monitor',
+                self.ARTISTS_INFO])
+        return True
+
     def _get_current_artists_info(self):
+        if self._get_radiomonitor_artists_info():
+            return
         featured_artists = ''
         artist_names = []
         mbids = []
@@ -799,6 +850,7 @@ class Main(xbmc.Player):
         self.MAINSLEEP = getSettingInt('main_sleep', default=1)
         self.MAINIDLESLEEP = getSettingInt('main_idle_sleep', default=10)
         self.AGRESSIVESTREAMSEARCH = getSettingBool('agressive_stream_search')
+        self.USEAUDIOSTREAMMONITOR = getSettingBool('use_audio_stream_monitor')
         artist_image_storage = getSettingInt('artist_image_storage')
         if artist_image_storage == 1:
             self.KODILOCALSTORAGE = True
